@@ -1,8 +1,10 @@
 package com.example.youji.samplefragment;
 
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +25,9 @@ public class LoginFragment extends Fragment {
     EditText inputID, inputPW;
     Button loginBtn, signupBtn;
 
+    SharedPreferences mPrefs;
+    SharedPreferences.Editor mEditor;
+
     public LoginFragment() {
         // Required empty public constructor
     }
@@ -31,6 +36,9 @@ public class LoginFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        mPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        mEditor = mPrefs.edit();
+
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_login, container, false);
 
@@ -52,7 +60,17 @@ public class LoginFragment extends Fragment {
                     Toast.makeText(getActivity(), "Input PW!", Toast.LENGTH_SHORT).show();
                 } else {
                     // LOGIN !
+                    String memberID = mPrefs.getString(SignUpFragment.LOGIN_ID, "");
+                    String memberPW = mPrefs.getString(SignUpFragment.LOGIN_PW, "");
 
+                    if (id.equals(memberID) && pw.equals(memberPW)) {
+                        Toast.makeText(getActivity(), "Success!!", Toast.LENGTH_SHORT).show();
+                        getActivity().finish();
+                    } else if (TextUtils.isEmpty(memberID) && TextUtils.isEmpty(memberPW)) {
+                        Toast.makeText(getActivity(), "NO ID!!!", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(getActivity(), "CHECK ID/PW!!", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         });
